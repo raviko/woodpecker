@@ -1,7 +1,7 @@
-using gcc ;
+using darwin ;
 import os ;
 
-local boost_root = [ os.environ BOOST_ROOT ] ;
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
 
 ECHO $(boost_root) ;
 
@@ -10,7 +10,7 @@ project woodpecker_root
 	  <os>NT:<define>_SCL_SECURE_NO_WARNINGS
 	  <os>NT:<define>_CRT_SECURE_NO_WARNINGS
 	  <os>NT:<define>_WIN32_WINNT=0x0501		
-	  <include>$(boost_root)
+	  <include>$(BOOST_ROOT)
 	  <library-path>$(boost_root)/stage/lib
 	  <threading>multi 		
 	: build-dir build 

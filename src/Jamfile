@@ -1,10 +1,15 @@
 # Processing of measurments
+import os ;
 project woodpecker
 	: requirements
 	: build-dir build 
 	;
       
+local BOOST_ROOT = [ os.environ BOOST_ROOT ] ;
+
+ECHO $(boost_root) ;
+
 exe woodpecker : 
 [ glob *.cpp ]
-[ glob ~/boost/stage/lib/libboost_*.a ]
+[ glob $(BOOST_ROOT)/stage/lib/libboost_*.a ]
 ;

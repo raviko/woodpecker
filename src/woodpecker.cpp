@@ -1,6 +1,8 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/date_time/time_facet.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 using namespace std;
 
@@ -13,14 +15,14 @@ class Serial {
 public:
   Serial(boost::asio::serial_port & port) : m_port(port),
 					    m_timer(m_port.get_io_service()),
-					    m_keep_running(true), m_linesize(0) {
+					    m_keep_running(true) {
   }
 
   void start(){
     boost::asio::deadline_timer timer(m_port.get_io_service());
     while(m_keep_running){
       read_serial();
-      m_timer.expires_from_now(boost::posix_time::milliseconds(500));
+      m_timer.expires_from_now(boost::posix_time::milliseconds(100));
       m_timer.async_wait(boost::bind(&Serial::time_out, this,
 				   boost::asio::placeholders::error));
 		  
@@ -36,20 +38,32 @@ private:
   boost::asio::serial_port & m_port;
   boost::asio::deadline_timer m_timer;
   bool m_keep_running;
-  char c;
-  int m_linesize;
+  boost::asio::streambuf  buf;
 
 
 
   void read_complete(const boost::system::error_code& error, size_t bytes_transferred){
-    m_linesize++;
-    std::cout << c << " 0x" << std::hex << (0xff & int(c)) << std::dec << " ";
-    if(m_linesize>=16){
-      std::cout << std::endl;
-      m_linesize = 0;
+    boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+
+    if( bytes_transferred > 0 )
+{
+  
+      std::istream ss(&buf);
+      std::string s;
+
+      boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%H:%M:%S.%f");
+      std::cout.imbue(locale(std::cout.getloc(), facet));
+      ss >> s;
+      for(std::string::iterator i=s.begin(); i!=s.end(); ++i){
+
+	std::cout <<  now
+	  <<" | "
+	  << *i << " 0x" << std::hex << (0xff & *i) << std::dec << std::endl;
+	
+      }
+
     }
-    m_timer.cancel();
-    
+      m_timer.cancel();    
   }
 
   void time_out(const boost::system::error_code& error) {
@@ -63,11 +77,10 @@ private:
 
 
   bool read_serial(){
-    c = '0';
     m_port.get_io_service().reset();
 		  
     boost::asio::async_read(m_port,
-			    boost::asio::buffer(&c, 1),
+			    buf,
 			    boost::bind(&Serial::read_complete, this, 
 					boost::asio::placeholders::error,
 					boost::asio::placeholders::bytes_transferred));
