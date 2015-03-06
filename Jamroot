@@ -1,12 +1,17 @@
-using darwin ;
+using gcc ;
+import os ;
+
+local boost_root = [ os.environ BOOST_ROOT ] ;
+
+ECHO $(boost_root) ;
 
 project woodpecker_root
 	: requirements
 	  <os>NT:<define>_SCL_SECURE_NO_WARNINGS
 	  <os>NT:<define>_CRT_SECURE_NO_WARNINGS
 	  <os>NT:<define>_WIN32_WINNT=0x0501		
-	  <include>../thirdparty/boost 
-	  <library-path>../thirdparty/boost/stage/lib
+	  <include>$(boost_root)
+	  <library-path>$(boost_root)/stage/lib
 	  <threading>multi 		
 	: build-dir build 
 	;

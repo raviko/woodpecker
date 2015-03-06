@@ -6,5 +6,5 @@ project woodpecker
       
 exe woodpecker : 
 [ glob *.cpp ]
-[ glob ../../thirdparty/boost/stage/lib/libboost_*.a ]
+[ glob ~/boost/stage/lib/libboost_*.a ]
 ;
