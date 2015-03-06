@@ -1,0 +1,13 @@
+using darwin ;
+
+project woodpecker_root
+	: requirements
+	  <os>NT:<define>_SCL_SECURE_NO_WARNINGS
+	  <os>NT:<define>_CRT_SECURE_NO_WARNINGS
+	  <os>NT:<define>_WIN32_WINNT=0x0501		
+	  <include>../thirdparty/boost 
+	  <library-path>../thirdparty/boost/stage/lib
+	  <threading>multi 		
+	: build-dir build 
+	;
+	

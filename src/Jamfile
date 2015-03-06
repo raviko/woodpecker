@@ -1,0 +1,10 @@
+# Processing of measurments
+project woodpecker
+	: requirements
+	: build-dir build 
+	;
+      
+exe woodpecker : 
+[ glob *.cpp ]
+[ glob ../../thirdparty/boost/stage/lib/libboost_*.a ]
+;
